@@ -20,7 +20,7 @@ erl_crash.dump
 *.ez
 
 # Ignore package tarball (built via "mix hex.build").
-dark_phoenix-*.tar
+dark_matter-*.tar
 
 # Dialyzer
 /priv/plts/*.plt

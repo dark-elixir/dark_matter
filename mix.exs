@@ -6,6 +6,7 @@ defmodule DarkMatter.MixProject do
   use Mix.Project
 
   @version "1.0.1"
+  @name "DarkMatter"
   @hexpm_url "http://hexdocs.pm/dark-elixir/dark_matter"
   @github_url "https://github.com/dark-elixir/dark_matter"
   @description "Libraries and utils for general elixir development."
@@ -13,9 +14,10 @@ defmodule DarkMatter.MixProject do
   def project do
     [
       app: :dark_matter,
-      version: "0.2.0",
+      version: @version,
       deps: deps(),
       start_permanent: Mix.env() == :prod,
+      dialyzer: [plt_add_apps: [:absinthe, :phoenix]],
 
       # Hex
       description: @description,
@@ -23,7 +25,7 @@ defmodule DarkMatter.MixProject do
       source_url: @github_url,
 
       # Docs
-      name: "DarkMatter",
+      name: @name,
       docs: docs()
     ]
   end
@@ -38,17 +40,13 @@ defmodule DarkMatter.MixProject do
       {:absinthe, ">= 1.5.0", optional: true},
       {:phoenix, ">= 1.5.0", optional: true},
       {:ecto, ">= 3.0.0", optional: true},
-      # {:ecto_sql, ">= 3.0.0", optional: true},
-      {:jason, ">= 1.0.0", optional: true},
-      # {:iteraptor, "~> 1.5", optional: true},
+      {:jason, ">= 1.0.0"},
+      {:iteraptor, ">= 1.5.0"},
       {:inflex, "~> 2.0"},
       {:recase, "~> 0.5"},
       {:decimal, "~> 1.5"},
       {:numerix, "~> 0.6"},
-      {:hashids, "~> 2.0"},
-      {:timex, ">= 3.0.0", optional: true},
-      {:holidefs, ">= 0.3.0", optional: true}
-      # {:open_hours, "~> 0.1.0"},
+      {:hashids, "~> 2.0"}
     ]
   end
 
@@ -63,7 +61,7 @@ defmodule DarkMatter.MixProject do
 
   defp docs do
     [
-      main: "DarkMatter",
+      main: @name,
       source_ref: "v#{@version}",
       canonical: @hexpm_url,
       logo: "guides/images/dark-elixir.png",
