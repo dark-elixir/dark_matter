@@ -1,0 +1,15 @@
+[
+  out: "",
+  exit: "low",
+  threshold: "low",
+  format: "txt",
+  skip: true,
+  quiet: false,
+  private: true,
+  verbose: true,
+  ignore: [
+    "DOS.BinToAtom",
+    "DOS.StringToAtom"
+  ],
+  ignore_files: []
+]
