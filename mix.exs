@@ -5,7 +5,7 @@ defmodule DarkMatter.MixProject do
 
   use Mix.Project
 
-  @version "1.0.0"
+  @version "1.0.1"
   @name "DarkMatter"
   @hexpm_url "http://hexdocs.pm/dark_matter"
   @github_url "https://github.com/dark-elixir/dark_matter"
@@ -36,7 +36,7 @@ defmodule DarkMatter.MixProject do
 
   defp deps do
     [
-      {:dark_dev, ">= 1.0.2", only: [:dev, :test], runtime: false},
+      {:dark_dev, ">= 1.0.3", only: [:dev, :test], runtime: false},
       {:absinthe, ">= 1.5.0", optional: true},
       {:phoenix, ">= 1.5.0", optional: true},
       {:ecto, ">= 3.0.0", optional: true},
