@@ -1,6 +1,6 @@
 # DarkMatter
 
-Naming for modules.
+General elixir utils.
 
 ## Installation
 
