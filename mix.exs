@@ -42,11 +42,11 @@ defmodule DarkMatter.MixProject do
       {:ecto, ">= 3.0.0", optional: true},
       {:jason, ">= 1.0.0"},
       {:iteraptor, ">= 1.5.0"},
-      {:inflex, "~> 2.0"},
-      {:recase, "~> 0.5"},
-      {:decimal, "~> 1.5"},
-      {:numerix, "~> 0.6"},
-      {:hashids, "~> 2.0"}
+      {:inflex, ">= 2.0.0"},
+      {:recase, ">= 0.5.0"},
+      {:decimal, ">= 1.5.0"},
+      {:numerix, ">= 0.6.0"},
+      {:hashids, ">= 2.0.0"}
     ]
   end
 
