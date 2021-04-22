@@ -13,7 +13,7 @@ defmodule DarkMatter.Decimals.Arithmetic do
     x0
     |> Conversion.cast_decimal()
     |> Decimal.add(Conversion.cast_decimal(x1))
-    |> Decimal.reduce()
+    |> Decimal.normalize()
   end
 
   @doc """
@@ -27,7 +27,7 @@ defmodule DarkMatter.Decimals.Arithmetic do
     |> decimal_sum(default)
     |> decimal_div(length(decimals), default)
 
-    # |> Decimal.reduce()
+    # |> Decimal.normalize()
   end
 
   @doc """
@@ -38,13 +38,13 @@ defmodule DarkMatter.Decimals.Arithmetic do
   def decimal_div(_dividend, nil, default), do: Conversion.cast_decimal(default)
 
   def decimal_div(dividend, divisor, default) do
-    if Decimal.cmp(Conversion.cast_decimal!(dividend), 0) == :eq do
+    if Decimal.compare(Conversion.cast_decimal!(dividend), 0) == :eq do
       Conversion.cast_decimal(default)
     else
       dividend
       |> Conversion.cast_decimal!()
       |> Decimal.div(Conversion.cast_decimal!(divisor))
-      |> Decimal.reduce()
+      |> Decimal.normalize()
     end
   end
 
@@ -55,7 +55,7 @@ defmodule DarkMatter.Decimals.Arithmetic do
     left
     |> Conversion.cast_decimal!()
     |> Decimal.mult(Conversion.cast_decimal!(right))
-    |> Decimal.reduce()
+    |> Decimal.normalize()
   end
 
   @doc """
@@ -65,7 +65,7 @@ defmodule DarkMatter.Decimals.Arithmetic do
     x0
     |> Conversion.cast_decimal()
     |> Decimal.sub(Conversion.cast_decimal(x1))
-    |> Decimal.reduce()
+    |> Decimal.normalize()
   end
 
   @doc """
@@ -78,7 +78,7 @@ defmodule DarkMatter.Decimals.Arithmetic do
     decimals
     |> Enum.map(&Conversion.cast_decimal!/1)
     |> Enum.reduce(Conversion.cast_decimal(0), &Decimal.add/2)
-    |> Decimal.reduce()
+    |> Decimal.normalize()
   end
 
   @doc """

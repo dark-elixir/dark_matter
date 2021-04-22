@@ -37,14 +37,14 @@ defmodule DarkMatter.MixProject do
   defp deps do
     [
       {:dark_dev, ">= 1.0.3", only: [:dev, :test], runtime: false},
-      {:absinthe, ">= 1.5.0", optional: true},
+      {:absinthe, ">= 1.6.4", optional: true},
       {:phoenix, ">= 1.5.0", optional: true},
       {:ecto, ">= 3.0.0", optional: true},
-      {:jason, ">= 1.0.0"},
+      {:jason, ">= 1.2.2"},
       {:iteraptor, ">= 1.5.0"},
       {:inflex, ">= 2.0.0"},
       {:recase, ">= 0.5.0"},
-      {:decimal, ">= 1.5.0"},
+      {:decimal, ">= 2.0.0"},
       {:numerix, ">= 0.6.0"},
       {:hashids, ">= 2.0.0"}
     ]
