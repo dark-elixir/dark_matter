@@ -40,7 +40,7 @@ defmodule DarkMatter.Decimals.Variance do
     list
     |> Enum.map(&Conversion.cast_decimal!/1)
     |> Enum.map(fn item ->
-      if Decimal.cmp(item, 0) == :eq do
+      if Decimal.compare(item, 0) == :eq do
         Decimal.new(0)
       else
         item
@@ -82,7 +82,7 @@ defmodule DarkMatter.Decimals.Variance do
       decimal_uniform?(list) ->
         Conversion.cast_decimal(100)
 
-      Decimal.cmp(mean, 0) == :eq ->
+      Decimal.compare(mean, 0) == :eq ->
         Conversion.cast_decimal(0)
 
       true ->

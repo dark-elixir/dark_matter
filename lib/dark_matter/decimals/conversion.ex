@@ -45,11 +45,11 @@ defmodule DarkMatter.Decimals.Conversion do
   end
 
   def cast_decimal(%Decimal{} = decimal, :reduced) do
-    decimal |> Decimal.reduce()
+    decimal |> Decimal.normalize()
   end
 
   def cast_decimal(%Decimal{} = decimal, :normal) do
-    {:ok, normal_decimal} = decimal |> Decimal.to_string(:normal) |> Decimal.parse()
+    {normal_decimal, _remainder} = decimal |> Decimal.to_string(:normal) |> Decimal.parse()
     normal_decimal
   end
 
@@ -100,14 +100,14 @@ defmodule DarkMatter.Decimals.Conversion do
   Compare Decimal
   """
   def decimal_cmp(x, y) do
-    Decimal.cmp(cast_decimal(x), cast_decimal(y))
+    Decimal.compare(cast_decimal(x), cast_decimal(y))
   end
 
   @doc """
   Determines if two decimals are equivalent.
   """
   def decimal_equal?(x, y) do
-    Decimal.cmp(cast_decimal(x), cast_decimal(y)) == :eq
+    Decimal.compare(cast_decimal(x), cast_decimal(y)) == :eq
   end
 
   @doc """
@@ -135,7 +135,7 @@ defmodule DarkMatter.Decimals.Conversion do
       |> cast_decimal()
       |> Decimal.rem(cast_decimal(factor))
 
-    Decimal.cmp(rem, Decimal.new(0)) == :eq
+    Decimal.compare(rem, Decimal.new(0)) == :eq
   end
 
   defp sanitize_binary(binary) when is_binary(binary) do

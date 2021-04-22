@@ -305,7 +305,7 @@ defmodule DarkMatter.Decimals do
   nil
 
   iex> to_string("xyz")
-  ** (Decimal.Error) invalid_operation: number parsing syntax: xyz
+  ** (Decimal.Error): number parsing syntax: "xyz"
   """
   defdelegate to_string(x), to: Conversion
   defdelegate to_string(x, mode), to: Conversion
