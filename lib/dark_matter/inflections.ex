@@ -137,7 +137,7 @@ defmodule DarkMatter.Inflections do
   @doc """
   Returns the pascal case version of the string
 
-  absinthe_  ## Examples
+  ## Examples
 
       iex> absinthe_pascalize("foo_bar")
       "FooBar"

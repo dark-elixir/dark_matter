@@ -1,6 +1,6 @@
 defmodule DarkMatterTest do
   @moduledoc """
-  Test for DarkMatter.Enums
+  Test for DarkMatter
   """
 
   use ExUnit.Case, async: true

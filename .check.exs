@@ -7,7 +7,7 @@
   tools: [
     {:compiler, "mix compile --warnings-as-errors --force"},
     {:formatter, "mix format --check-formatted", detect: [file: ".formatter.exs"]},
-    {:credo, "mix credo --strict", detect: [package: :dark_dev]},
+    {:credo, "mix credo", detect: [package: :dark_dev]},
     {:sobelow, "mix sobelow --config", umbrella: [recursive: true], detect: [package: :dark_dev]},
     {:ex_doc, "mix docs", detect: [package: :dark_dev]},
     {:ex_unit, "mix test", detect: [file: "test"]},

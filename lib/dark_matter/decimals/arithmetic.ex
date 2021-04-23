@@ -4,11 +4,15 @@ defmodule DarkMatter.Decimals.Arithmetic do
   """
   @moduledoc since: "1.0.0"
 
+  import DarkMatter.Guards
+
+  alias DarkMatter.Decimals.Comparison
   alias DarkMatter.Decimals.Conversion
 
   @doc """
   Add Decimal
   """
+  @spec decimal_add(DarkMatter.numeric(), DarkMatter.strict_numeric()) :: Decimal.t()
   def decimal_add(x0, x1) do
     x0
     |> Conversion.cast_decimal()
@@ -19,10 +23,14 @@ defmodule DarkMatter.Decimals.Arithmetic do
   @doc """
   Avg Decimal
   """
+  @spec decimal_avg([DarkMatter.numeric()], DarkMatter.strict_numeric()) :: Decimal.t()
   def decimal_avg(decimals, default \\ 0)
-  def decimal_avg([], default), do: Conversion.cast_decimal(default)
 
-  def decimal_avg(decimals, default) when is_list(decimals) do
+  def decimal_avg([], default) when is_strict_numeric(default) do
+    Conversion.cast_decimal(default)
+  end
+
+  def decimal_avg(decimals, default) when is_list(decimals) and is_strict_numeric(default) do
     decimals
     |> decimal_sum(default)
     |> decimal_div(length(decimals), default)
@@ -33,12 +41,20 @@ defmodule DarkMatter.Decimals.Arithmetic do
   @doc """
   Div Decimal
   """
+  @spec decimal_div(DarkMatter.numeric(), DarkMatter.numeric(), DarkMatter.strict_numeric()) ::
+          Decimal.t()
   def decimal_div(dividend, divisor, default \\ 0)
-  def decimal_div(nil, _divisor, default), do: Conversion.cast_decimal(default)
-  def decimal_div(_dividend, nil, default), do: Conversion.cast_decimal(default)
 
-  def decimal_div(dividend, divisor, default) do
-    if Decimal.compare(Conversion.cast_decimal!(dividend), 0) == :eq do
+  def decimal_div(nil, _divisor, default) when is_strict_numeric(default) do
+    Conversion.cast_decimal(default)
+  end
+
+  def decimal_div(_dividend, nil, default) when is_strict_numeric(default) do
+    Conversion.cast_decimal(default)
+  end
+
+  def decimal_div(dividend, divisor, default) when is_strict_numeric(default) do
+    if Comparison.decimal_equal?(dividend, 0) do
       Conversion.cast_decimal(default)
     else
       dividend
@@ -51,6 +67,7 @@ defmodule DarkMatter.Decimals.Arithmetic do
   @doc """
   Multiply Decimal
   """
+  @spec decimal_mult(DarkMatter.numeric(), DarkMatter.numeric()) :: Decimal.t()
   def decimal_mult(left, right) do
     left
     |> Conversion.cast_decimal!()
@@ -61,6 +78,7 @@ defmodule DarkMatter.Decimals.Arithmetic do
   @doc """
   Sub Decimal
   """
+  @spec decimal_sub(DarkMatter.numeric(), DarkMatter.numeric()) :: Decimal.t()
   def decimal_sub(x0, x1) do
     x0
     |> Conversion.cast_decimal()
@@ -71,10 +89,14 @@ defmodule DarkMatter.Decimals.Arithmetic do
   @doc """
   Sum Decimal
   """
+  @spec decimal_sum([DarkMatter.numeric()], DarkMatter.strict_numeric()) :: Decimal.t()
   def decimal_sum(decimals, default \\ 0)
-  def decimal_sum([], default), do: Conversion.cast_decimal(default)
 
-  def decimal_sum(decimals, _default) when is_list(decimals) do
+  def decimal_sum([], default) when is_strict_numeric(default) do
+    Conversion.cast_decimal(default)
+  end
+
+  def decimal_sum(decimals, default) when is_list(decimals) and is_strict_numeric(default) do
     decimals
     |> Enum.map(&Conversion.cast_decimal!/1)
     |> Enum.reduce(Conversion.cast_decimal(0), &Decimal.add/2)
@@ -82,27 +104,28 @@ defmodule DarkMatter.Decimals.Arithmetic do
   end
 
   @doc """
-  Percent Decimal
+  Calculate the percentage.
   """
-  def from_percentage(amount) do
-    amount
-    |> decimal_div(100)
-  end
-
-  @doc """
-  Percent Decimal
-  """
-  def to_percentage(amount) do
-    amount
-    |> decimal_mult(100)
-  end
-
-  @doc """
-  Percent Decimal
-  """
-  def decimal_percent(allocation, total) do
+  @spec decimal_percentage(DarkMatter.numeric(), DarkMatter.numeric()) :: Decimal.t()
+  def decimal_percentage(allocation, total) do
     allocation
-    |> decimal_mult(100)
+    |> to_percentage()
     |> decimal_div(total)
+  end
+
+  @doc """
+  Cast from a percentage.
+  """
+  @spec from_percentage(DarkMatter.numeric()) :: Decimal.t()
+  def from_percentage(amount) do
+    decimal_div(amount, 100)
+  end
+
+  @doc """
+  Cast to a percentage.
+  """
+  @spec to_percentage(DarkMatter.numeric()) :: Decimal.t()
+  def to_percentage(amount) do
+    decimal_mult(amount, 100)
   end
 end

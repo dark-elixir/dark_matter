@@ -50,10 +50,9 @@ defmodule DarkMatter.ShortIds do
   """
   @spec decode(cipher(), options()) :: {:ok, keys()} | :error
   def decode(cipher, opts \\ @default_options) when is_binary(cipher) do
-    opts
-    |> Hashids.new()
-    |> Hashids.decode(cipher)
-    |> case do
+    hashid = Hashids.new(opts)
+
+    case Hashids.decode(hashid, cipher) do
       {:ok, keys} when is_list(keys) -> {:ok, keys}
       {:error, :invalid_input_data} -> :error
     end
@@ -78,7 +77,7 @@ defmodule DarkMatter.ShortIds do
     case decode(cipher, opts) do
       {:ok, [id]} -> {:ok, id}
       {:ok, ids} when is_list(ids) -> :error
-      _ -> :error
+      _any -> :error
     end
   end
 

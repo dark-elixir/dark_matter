@@ -6,27 +6,44 @@ defmodule DarkMatter.Mfas do
 
   import DarkMatter.Guards,
     only: [
-      is_module: 1,
-      is_fun_atom: 1,
-      is_arity: 1
+      is_arity: 1,
+      is_module: 1
     ]
 
   @type t() :: mfa()
 
   @doc """
   Define a guard clause for working with `t:mfa/0`.
+
+  ## Examples
+
+      iex> is_mfa({Kernel, :+, 2})
+      true
+
+      iex> is_mfa([])
+      false
   """
   @doc guard: true
   @spec is_mfa(any()) :: Macro.t()
-  defguard is_mfa(mfa)
-           when is_tuple(mfa) and tuple_size(mfa) == 3 and
-                  is_module(elem(mfa, 0)) and
-                  is_fun_atom(elem(mfa, 1)) and
-                  is_arity(elem(mfa, 2))
+  defguard is_mfa(value)
+           when is_tuple(value) and tuple_size(value) == 3 and
+                  is_module(elem(value, 0)) and
+                  is_atom(elem(value, 1)) and
+                  is_arity(elem(value, 2))
 
   @doc """
   Define a check for pattern matching on `t:mfa/0`.
+
+  ## Examples
+
+      iex> is_mfa({Kernel, :+, 2})
+      true
+
+      iex> is_mfa([])
+      false
   """
   @spec mfa?(any()) :: boolean()
-  def mfa?(mfa), do: is_mfa(mfa)
+  def mfa?(value) do
+    is_mfa(value)
+  end
 end

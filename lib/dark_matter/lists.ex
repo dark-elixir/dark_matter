@@ -5,14 +5,14 @@ defmodule DarkMatter.Lists do
   @moduledoc since: "1.0.0"
 
   @type atom_or_improper_tree_list() ::
-          atom()
-          | {atom(), atom_or_improper_tree_list()}
-          | [atom_or_improper_tree_list()]
+          atom
+          | maybe_improper_list
+          | {atom, atom | maybe_improper_list | {atom, atom | maybe_improper_list | {any, any}}}
 
   @doc """
   Flattens common tree shaped keyword lists into a single list
 
-    ## Examples
+  ## Examples
 
       iex> flatten_atom_or_improper_tree_list([])
       []
@@ -43,22 +43,23 @@ defmodule DarkMatter.Lists do
     do_flatten_atom_or_improper_tree_list([], val)
   end
 
-  def do_flatten_atom_or_improper_tree_list(acc, atom) when is_list(acc) and is_atom(atom) do
+  defp do_flatten_atom_or_improper_tree_list(acc, atom) when is_list(acc) and is_atom(atom) do
     [atom | acc]
   end
 
-  def do_flatten_atom_or_improper_tree_list(acc, {atom, val})
-      when is_list(acc) and is_atom(atom) do
+  defp do_flatten_atom_or_improper_tree_list(acc, {atom, val})
+       when is_list(acc) and is_atom(atom) do
     [atom | do_flatten_atom_or_improper_tree_list([], val)] ++ acc
   end
 
-  def do_flatten_atom_or_improper_tree_list(acc, list) when is_list(acc) and is_list(list) do
+  defp do_flatten_atom_or_improper_tree_list(acc, list) when is_list(acc) and is_list(list) do
     acc ++ Enum.flat_map(list, &do_flatten_atom_or_improper_tree_list([], &1))
   end
 
   @doc """
   Split list into uniques
   """
+  @spec split_uniq(Enumerable.t()) :: {Enumerable.t(), Enumerable.t()}
   def split_uniq(enumerable) do
     split_uniq_by(enumerable, fn x -> x end)
   end
@@ -66,6 +67,7 @@ defmodule DarkMatter.Lists do
   @doc """
   Split list into uniques by `fun`
   """
+  @spec split_uniq_by(Enumerable.t(), (any() -> any())) :: {Enumerable.t(), Enumerable.t()}
   def split_uniq_by(enumerable, fun) when is_list(enumerable) do
     split_uniq_list(enumerable, %{}, fun)
   end

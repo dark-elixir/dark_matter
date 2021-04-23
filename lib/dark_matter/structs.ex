@@ -4,30 +4,7 @@ defmodule DarkMatter.Structs do
   """
   @moduledoc since: "1.0.5"
 
-  import DarkMatter.Guards,
-    only: [
-      is_module: 1,
-      is_ecto_struct: 1,
-      is_ecto_struct: 2
-    ]
-
-  @type t() :: struct()
-
-  defdelegate struct?(struct), to: Kernel, as: :is_struct
-  defdelegate struct?(struct, module), to: Kernel, as: :is_struct
-
-  @doc """
-  Define a guard clause for working with `Ecto` based `t:struct/0`.
-  """
-  @spec ecto_struct?(any()) :: boolean()
-  def ecto_struct?(struct) do
-    is_ecto_struct(struct)
-  end
-
-  @spec ecto_struct?(any(), module()) :: boolean()
-  def ecto_struct?(struct, module) when is_module(module) do
-    is_ecto_struct(struct, module)
-  end
+  import DarkMatter.Guards, only: [is_module: 1]
 
   @doc """
   Determine keys for a given `module` or raises `ArgumentError`.

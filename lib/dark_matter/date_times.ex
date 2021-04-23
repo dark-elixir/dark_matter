@@ -42,7 +42,7 @@ defmodule DarkMatter.DateTimes do
       {:ok, %DateTime{} = datetime, 0} ->
         datetime
 
-      _ ->
+      _any ->
         raise ArgumentError,
           message: "cannot parse #{inspect(binary)} as datetime, reason: :invalid_format"
     end

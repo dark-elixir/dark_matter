@@ -5,7 +5,10 @@ defmodule DarkMatter.Decimals.Variance do
   @moduledoc since: "1.0.0"
 
   alias DarkMatter.Decimals.Arithmetic
+  alias DarkMatter.Decimals.Comparison
   alias DarkMatter.Decimals.Conversion
+
+  @type minmax() :: {DarkMatter.strict_numeric(), DarkMatter.strict_numeric()}
 
   @defaults %{
     variance: {0, 0},
@@ -16,8 +19,18 @@ defmodule DarkMatter.Decimals.Variance do
   @doc """
   Calculate variance
   """
-  def variance([]), do: @defaults.variance |> elem(0) |> Conversion.cast_decimal()
-  def variance([_]), do: @defaults.variance |> elem(1) |> Conversion.cast_decimal()
+  @spec variance([DarkMatter.numeric()]) :: Decimal.t()
+  def variance([]) do
+    @defaults.variance
+    |> elem(0)
+    |> Conversion.cast_decimal()
+  end
+
+  def variance([_]) do
+    @defaults.variance
+    |> elem(1)
+    |> Conversion.cast_decimal()
+  end
 
   def variance(list) when is_list(list) do
     list
@@ -29,10 +42,16 @@ defmodule DarkMatter.Decimals.Variance do
   @doc """
   Variance percent relative to the mean
   """
-
+  @spec variance_percent([DarkMatter.numeric()], minmax()) :: Decimal.t()
   def variance_percent(list, default \\ @defaults.variance_percent)
-  def variance_percent([], {default, _}), do: Conversion.cast_decimal(default)
-  def variance_percent([_], {_, default}), do: Conversion.cast_decimal(default)
+
+  def variance_percent([], {default, _}) do
+    Conversion.cast_decimal(default)
+  end
+
+  def variance_percent([_], {_, default}) do
+    Conversion.cast_decimal(default)
+  end
 
   def variance_percent(list, _default) when is_list(list) do
     mean = Arithmetic.decimal_avg(list)
@@ -40,7 +59,7 @@ defmodule DarkMatter.Decimals.Variance do
     list
     |> Enum.map(&Conversion.cast_decimal!/1)
     |> Enum.map(fn item ->
-      if Decimal.compare(item, 0) == :eq do
+      if Comparison.decimal_equal?(item, 0) do
         Decimal.new(0)
       else
         item
@@ -54,26 +73,39 @@ defmodule DarkMatter.Decimals.Variance do
     |> Arithmetic.decimal_add(100)
   end
 
-  def decimal_uniform?([]), do: true
-  def decimal_uniform?([_]), do: true
+  @doc """
+  Determine if a list is a uniform set of `t:DarkMatter.numeric/0`.
+  """
+  @spec decimal_uniform?([DarkMatter.numeric()]) :: boolean()
+  def decimal_uniform?([]) do
+    true
+  end
+
+  def decimal_uniform?([_]) do
+    true
+  end
 
   def decimal_uniform?(list) when is_list(list) do
-    count =
-      list
-      |> Enum.map(&Conversion.cast_decimal!/1)
-      |> MapSet.new()
-      |> MapSet.size()
-
-    count == 1
+    list
+    |> Enum.map(&Conversion.cast_decimal!/1)
+    |> MapSet.new()
+    |> MapSet.size()
+    |> Comparison.decimal_equal?(1)
   end
 
   @doc """
   Max entries percent variance relative to the mean
   """
-
+  @spec max_variance_percent([DarkMatter.numeric()], minmax()) :: Decimal.t()
   def max_variance_percent(list, default \\ @defaults.max_variance_percent)
-  def max_variance_percent([], {default, _}), do: Conversion.cast_decimal(default)
-  def max_variance_percent([_], {_, default}), do: Conversion.cast_decimal(default)
+
+  def max_variance_percent([], {default, _}) do
+    Conversion.cast_decimal(default)
+  end
+
+  def max_variance_percent([_], {_, default}) do
+    Conversion.cast_decimal(default)
+  end
 
   def max_variance_percent(list, _default) when is_list(list) do
     mean = Arithmetic.decimal_avg(list)
@@ -82,7 +114,7 @@ defmodule DarkMatter.Decimals.Variance do
       decimal_uniform?(list) ->
         Conversion.cast_decimal(100)
 
-      Decimal.compare(mean, 0) == :eq ->
+      Comparison.decimal_equal?(mean, 0) ->
         Conversion.cast_decimal(0)
 
       true ->

@@ -1,11 +1,11 @@
-defmodule DarkMatter.Decimals.ConversionTest do
+defmodule DarkMatter.Decimals.ComparisonTest do
   @moduledoc """
-  Test for DarkMatter.Decimals.Conversion
+  Test for DarkMatter.Decimals.Comparison
   """
 
   use ExUnit.Case, async: true
 
-  alias DarkMatter.Decimals.Conversion
+  alias DarkMatter.Decimals.Comparison
 
   @cases %{
     normal: [
@@ -94,107 +94,42 @@ defmodule DarkMatter.Decimals.ConversionTest do
     ]
   }
 
-  describe ".cast_decimal/1" do
-    for {given, expected} <- @cases.normalized do
-      test "given #{inspect(given)} it returns #{inspect(expected)}" do
-        given = unquote(Macro.escape(given))
-        expected = unquote(Macro.escape(expected))
-
-        assert Conversion.cast_decimal(given) == expected
-      end
-    end
-  end
-
-  describe ".cast_decimal/2 (:normal)" do
-    @option :normal
+  describe ".decimal_compare/2 " do
     for {given, expected} <- @cases.normal do
-      test "given #{inspect(given)} it returns #{inspect(expected)}" do
+      test "given #{inspect(given)} equals #{inspect(expected)} (normal)" do
         given = unquote(Macro.escape(given))
         expected = unquote(Macro.escape(expected))
 
-        assert Conversion.cast_decimal(given, @option) == expected
+        assert Comparison.decimal_compare(given, expected) == :eq
       end
     end
-  end
 
-  describe ".cast_decimal/2 (:reduced)" do
-    @option :reduced
     for {given, expected} <- @cases.normalized do
-      test "given #{inspect(given)} it returns #{inspect(expected)}" do
+      test "given #{inspect(given)} equals #{inspect(expected)} (normalized)" do
         given = unquote(Macro.escape(given))
         expected = unquote(Macro.escape(expected))
 
-        assert Conversion.cast_decimal(given, @option) == expected
+        assert Comparison.decimal_compare(given, expected) == :eq
       end
     end
   end
 
-  describe ".cast_decimal!/1" do
-    for {given, expected} <- @cases.normalized do
-      test "given #{inspect(given)} it returns #{inspect(expected)}" do
-        given = unquote(Macro.escape(given))
-        expected = unquote(Macro.escape(expected))
-
-        assert Conversion.cast_decimal(given) == expected
-      end
-    end
-  end
-
-  describe ".cast_decimal!/2 (:normal)" do
-    @option :normal
+  describe ".decimal_equal?/2 " do
     for {given, expected} <- @cases.normal do
-      test "given #{inspect(given)} it returns #{inspect(expected)}" do
+      test "given #{inspect(given)} equals #{inspect(expected)} (normal)" do
         given = unquote(Macro.escape(given))
         expected = unquote(Macro.escape(expected))
 
-        assert Conversion.cast_decimal!(given, @option) == expected
+        assert Comparison.decimal_equal?(given, expected) == true
       end
     end
-  end
 
-  describe ".cast_decimal!/2 (:reduced)" do
-    @option :reduced
     for {given, expected} <- @cases.normalized do
-      test "given #{inspect(given)} it returns #{inspect(expected)}" do
+      test "given #{inspect(given)} equals #{inspect(expected)} (normalized)" do
         given = unquote(Macro.escape(given))
         expected = unquote(Macro.escape(expected))
 
-        assert Conversion.cast_decimal!(given, @option) == expected
-      end
-    end
-  end
-
-  describe ".cast_decimal_ok/1" do
-    for {given, expected} <- @cases.normalized do
-      test "given #{inspect(given)} it returns #{inspect(expected)}" do
-        given = unquote(Macro.escape(given))
-        expected = unquote(Macro.escape(expected))
-
-        assert Conversion.cast_decimal_ok(given) == {:ok, expected}
-      end
-    end
-  end
-
-  describe ".cast_decimal_ok/2 (:normal)" do
-    @option :normal
-    for {given, expected} <- @cases.normal do
-      test "given #{inspect(given)} it returns #{inspect(expected)}" do
-        given = unquote(Macro.escape(given))
-        expected = unquote(Macro.escape(expected))
-
-        assert Conversion.cast_decimal_ok(given, @option) == {:ok, expected}
-      end
-    end
-  end
-
-  describe ".cast_decimal_ok/2 (:reduced)" do
-    @option :reduced
-    for {given, expected} <- @cases.normalized do
-      test "given #{inspect(given)} it returns #{inspect(expected)}" do
-        given = unquote(Macro.escape(given))
-        expected = unquote(Macro.escape(expected))
-
-        assert Conversion.cast_decimal_ok(given, @option) == {:ok, expected}
+        assert Comparison.decimal_equal?(given, expected) == true
       end
     end
   end

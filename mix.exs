@@ -5,7 +5,7 @@ defmodule DarkMatter.MixProject do
 
   use Mix.Project
 
-  @version "1.0.5"
+  @version "1.1.0"
   @name "DarkMatter"
   @hexpm_url "http://hexdocs.pm/dark_matter"
   @github_url "https://github.com/dark-elixir/dark_matter"
@@ -17,7 +17,7 @@ defmodule DarkMatter.MixProject do
       version: @version,
       deps: deps(),
       start_permanent: Mix.env() == :prod,
-      dialyzer: [plt_add_apps: [:absinthe, :phoenix]],
+      dialyzer: dialyzer(),
 
       # Hex
       description: @description,
@@ -36,7 +36,7 @@ defmodule DarkMatter.MixProject do
 
   defp deps do
     [
-      {:dark_dev, ">= 1.0.3", only: [:dev, :test], runtime: false},
+      {:dark_dev, ">= 1.0.8", only: [:dev, :test], runtime: false},
       {:absinthe, ">= 1.6.4", optional: true},
       {:phoenix, ">= 1.5.0", optional: true},
       {:ecto, ">= 3.0.0", optional: true},
@@ -46,7 +46,8 @@ defmodule DarkMatter.MixProject do
       {:recase, ">= 0.5.0"},
       {:decimal, ">= 2.0.0"},
       {:numerix, ">= 0.6.0"},
-      {:hashids, ">= 2.0.0"}
+      {:hashids, ">= 2.0.0"},
+      {:doctor, ">= 0.0.0"}
     ]
   end
 
@@ -83,6 +84,40 @@ defmodule DarkMatter.MixProject do
   defp groups_for_extras do
     [
       # Introduction: ~r/guides\/introduction\/.?/,
+    ]
+  end
+
+  defp dialyzer do
+    [
+      plt_add_deps: :app_tree,
+      plt_add_apps: [:absinthe, :phoenix],
+      list_unused_filters: true,
+      flags: [
+        # Useful additions
+        :error_handling,
+        :no_opaque,
+        :race_conditions,
+        :underspecs,
+        :unmatched_returns,
+
+        # Strict (annoying / low-impact)
+        # :overspecs,
+        # :specdiffs,
+
+        # Less common / potentially confusing
+        # (Can disable without much consequence)
+        :no_behaviours,
+        :no_contracts,
+        :no_fail_call,
+        :no_fun_app,
+        :no_improper_lists,
+        :no_match,
+        :no_missing_calls,
+        :no_return,
+        :no_undefined_callbacks,
+        :no_unused,
+        :unknown
+      ]
     ]
   end
 end

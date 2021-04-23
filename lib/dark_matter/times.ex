@@ -37,7 +37,9 @@ defmodule DarkMatter.Times do
   end
 
   def to_string(time) when is_binary(time) do
-    time |> from_iso8601!() |> __MODULE__.to_string()
+    time
+    |> from_iso8601!()
+    |> __MODULE__.to_string()
   end
 
   def to_string(nil) do

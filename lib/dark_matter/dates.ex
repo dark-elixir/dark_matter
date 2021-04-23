@@ -12,9 +12,17 @@ defmodule DarkMatter.Dates do
   Raises `ArgumentError` if a given `Date` isn't valid.
   """
   @spec cast_date(stringable()) :: nil | Date.t()
-  def cast_date(%Date{} = date), do: date
-  def cast_date(binary) when is_binary(binary), do: from_iso8601!(binary)
-  def cast_date(nil), do: nil
+  def cast_date(%Date{} = date) do
+    date
+  end
+
+  def cast_date(binary) when is_binary(binary) do
+    from_iso8601!(binary)
+  end
+
+  def cast_date(nil) do
+    nil
+  end
 
   @doc """
   Transform a `Date` into a string.
@@ -37,7 +45,9 @@ defmodule DarkMatter.Dates do
   end
 
   def to_string(date) when is_binary(date) do
-    date |> from_iso8601!() |> __MODULE__.to_string()
+    date
+    |> from_iso8601!()
+    |> __MODULE__.to_string()
   end
 
   def to_string(nil) do

@@ -1,6 +1,6 @@
 defmodule DarkMatter.Naming do
   @moduledoc """
-  `DarkMatter`.
+  DarkMatter naming conventions.
   """
   @moduledoc since: "1.0.0"
 
@@ -45,7 +45,7 @@ defmodule DarkMatter.Naming do
   @doc """
   Definition for reflected `DarkPhoenix.Schema`.
 
-    ## Examples
+  ## Examples
 
       iex> cast(DarkMatter)
       %DarkMatter.Naming{
@@ -130,12 +130,15 @@ defmodule DarkMatter.Naming do
   @doc """
   Derives the ` de` matter for the given `module`.
 
-    ## Examples
+  ## Examples
 
       iex> base_module_for(DarkMatter)
       DarkMatter
 
       iex> base_module_for(DarkMatter.Inflections)
+      DarkMatter
+
+      iex> base_module_for(DarkMatter.Decimals.Arithmetic)
       DarkMatter
   """
   @spec base_module_for(module()) :: module()
@@ -150,35 +153,36 @@ defmodule DarkMatter.Naming do
   @doc """
   Derives the `parent_module` matter for the given `module`.
 
-    ## Examples
+  ## Examples
 
       iex> parent_module_for(DarkMatter)
       DarkMatter
 
       iex> parent_module_for(DarkMatter.Inflections)
       DarkMatter
+
+      iex> parent_module_for(DarkMatter.Decimals.Arithmetic)
+      DarkMatter.Decimals
   """
   @spec parent_module_for(module()) :: module()
   def parent_module_for(module) do
-    module
-    |> Module.split()
-    |> case do
+    case Module.split(module) do
       [part] ->
-        [part]
+        Module.safe_concat([part])
 
-      [_ | _] = parts ->
+      [_hd | _tl] = parts ->
         parts
         |> Enum.reverse()
         |> tl()
         |> Enum.reverse()
+        |> Module.safe_concat()
     end
-    |> Module.safe_concat()
   end
 
   @doc """
   Derives the `alias` matter for the given `module`.
 
-    ## Examples
+  ## Examples
 
       iex> alias_for(DarkMatter)
       "DarkMatter"
@@ -194,7 +198,28 @@ defmodule DarkMatter.Naming do
     |> hd()
   end
 
-  def underscore_number(number) do
+  @doc """
+  Turn a `number` into a snake cased elixir numeric.
+
+  ## Examples
+
+      iex> underscore_number(1)
+      "1"
+
+      iex> underscore_number(100)
+      "100"
+
+      iex> underscore_number(1000)
+      "1_000"
+
+      iex> underscore_number(100000)
+      "100_000"
+
+      iex> underscore_number(100000000)
+      "100_000_000"
+  """
+  @spec underscore_number(number() | String.t()) :: String.t()
+  def underscore_number(number) when is_number(number) or is_binary(number) do
     "#{number}"
     |> String.reverse()
     |> String.to_charlist()
@@ -203,124 +228,4 @@ defmodule DarkMatter.Naming do
     |> String.reverse()
     |> to_string()
   end
-
-  # @doc """
-  # Derives the `alias_plural` matter for the given `module`.
-  # """
-  # @spec alias_plural_for(module()) :: String.t()
-  # def alias_plural_for(module) do
-  # module
-  # |> alias_for()
-  # |> plural()
-  # end
-
-  # @doc """
-  # Derives the `singular` matter for the given `module`.
-  # """
-  # @spec singular_for(module()) :: String.t()
-  # def singular_for(module) do
-  # module
-  # |> alias_for()
-  # |> snake()
-  # end
-
-  # @doc """
-  # Derives the `plural` matter for the given `module`.
-  # """
-  # @spec plural_for(module()) :: String.t()
-  # def plural_for(module) do
-  #   module
-  #   |> alias_for()
-  # |> snake()
-  # |> plural()
-  # end
-
-  #   @doc """
-  # Derives the `camel_singular` matter for the given `module`.
-  # """
-  # @spec camel_singular_for(module()) :: String.t()
-  # def camel_singular_for(module) do
-  #   module
-  #   |> singular_for()
-  #   |> camel()
-  # end
-
-  # @doc """
-  # Derives the `camel_plural` matter for the given `module`.
-  # """
-  # @spec camel_plural_for(module()) :: String.t()
-  # def camel_plural_for(module) do
-  #   module
-  #   |> plural_for()
-  #   |> camel()
-  # end
-
-  # @doc """
-  # Derives the `human_singular` matter for the given `module`.
-  # """
-  # @spec human_singular_for(module()) :: String.t()
-  # def human_singular_for(module) do
-  # module
-  # |> singular_for()
-  # |> numan()
-  # end
-
-  # @doc """
-  # Derives the `human_plural` matter for the given `module`.
-  # """
-  # @spec human_plural_for(module()) :: String.t()
-  # def human_plural_for(module) do
-  #   module
-  #   |> plural_for()
-  #   |> numan()
-  # end
-
-  # @doc """
-  # Derives the `pascal_singular` matter for the given `module`.
-  # """
-  # @spec pascal_singular_for(module()) :: String.t()
-  # def pascal_singular_for(module) do
-  #   module
-  #   |> singular_for()
-  #   |> pascal()
-  # end
-
-  # @doc """
-  # Derives the `pascal_plural` matter for the given `module`.
-  # """
-  # @spec pascal_plural_for(module()) :: String.t()
-  # def pascal_plural_for(module) do
-  #   module
-  #   |> plural_for()
-  #   |> pascal()
-  # end
-
-  # def stringify(atom) when is_atom(atom), do: Atom.to_string(atom)
-  # def stringify(binary) when is_binary(binary), do: (binary)
-
-  # def atomify(atom) when is_atom(atom), do: atom
-  # def atomify(binary) when is_binary(binary), do: String.to_atom(binary)
-
-  # def atomify_safe(atom) when is_atom(atom), do: atom
-  # def atomify_safe(binary) when is_binary(binary), do: String.to_existing_atom(binary)
-
-  # def pascal(name) when is_atom(name) or is_binary(name) do
-  #   name |> stringify() |> AbsintheUtils.camelize( [lower: false])
-  # end
-
-  # def camel(name) when is_atom(name) or is_binary(name) do
-  #   name |> stringify() |> AbsintheUtils.camelize( [lower: true])
-  # end
-
-  # def snake(name) when is_atom(name) or is_binary(name) do
-  #   name |> stringify() |> Macro.underscore( )
-  # end
-
-  # def plural(name) when is_atom(name) or is_binary(name) do
-  #   name |> stringify() Inflex.pluralize()
-  # end
-
-  # def singular(name) when is_atom(name) or is_binary(name) do
-  #   name |> stringify() Inflex.singularize()
-  # end
 end
