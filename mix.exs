@@ -5,7 +5,7 @@ defmodule DarkMatter.MixProject do
 
   use Mix.Project
 
-  @version "1.1.0"
+  @version "1.1.1"
   @name "DarkMatter"
   @hexpm_url "http://hexdocs.pm/dark_matter"
   @github_url "https://github.com/dark-elixir/dark_matter"
@@ -46,8 +46,7 @@ defmodule DarkMatter.MixProject do
       {:recase, ">= 0.5.0"},
       {:decimal, ">= 2.0.0"},
       {:numerix, ">= 0.6.0"},
-      {:hashids, ">= 2.0.0"},
-      {:doctor, ">= 0.0.0"}
+      {:hashids, ">= 2.0.0"}
     ]
   end
 

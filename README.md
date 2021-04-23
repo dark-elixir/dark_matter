@@ -10,7 +10,7 @@ by adding `dark_matter` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:dark_matter, "~> 1.1.0"}
+    {:dark_matter, "~> 1.1.1"}
   ]
 end
 ```
