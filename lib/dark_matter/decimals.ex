@@ -314,7 +314,7 @@ defmodule DarkMatter.Decimals do
   defdelegate to_number(x), to: Conversion
 
   @doc """
-  Rounds an `x` of type `nil` or `t:DarkMatter.numeric/0` into a `t:string/0`.
+  Rounds an `x` of type `nil` or `t:DarkMatter.numeric/0` into a `t:String.t/0`.
 
   ## Examples
 
