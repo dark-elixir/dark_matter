@@ -7,6 +7,10 @@ defmodule DarkMatter.Maps do
   @type access_key() :: atom() | String.t()
   @type access_key_or_keys() :: access_key() | [access_key(), ...]
 
+  @type iget_key() :: atom()
+  # @type iget_key() :: atom() | non_neg_integer()
+  @type accessor_path() :: iget_key() | [iget_key(), ...]
+
   @compact_defaults %{allow_nil: false, deep: false}
 
   @doc """
@@ -82,5 +86,39 @@ defmodule DarkMatter.Maps do
     results
     |> Map.keys()
     |> Enum.sort()
+  end
+
+  @doc """
+  Provide indifferent access to maps.
+  """
+  @doc since: "1.1.2"
+  @spec iget(map(), accessor_path()) :: any()
+  def iget(map, key) when is_map(map) and is_atom(key) do
+    string_key = Atom.to_string(key)
+
+    cond do
+      Map.has_key?(map, key) -> Map.get(map, key)
+      Map.has_key?(map, string_key) -> Map.get(map, string_key)
+      true -> nil
+    end
+  end
+
+  # def iget(list, key) when is_list(list) and is_number(key) and key >= 0 do
+  #   Enum.at(list, key)
+  # end
+
+  def iget(map, keys) when is_map(map) and is_list(keys) and keys != [] do
+    Enum.reduce_while(keys, map, fn
+      key, current when is_map(current) -> {:cont, iget(current, key)}
+      _key, nil -> {:halt, nil}
+    end)
+  end
+
+  @spec iget(map(), accessor_path(), any()) :: any()
+  def iget(map, key_or_keys, default) when is_map(map) do
+    case iget(map, key_or_keys) do
+      nil -> default
+      val -> val
+    end
   end
 end

@@ -8,6 +8,10 @@ defmodule DarkMatter.MapsTest do
 
   alias DarkMatter.Maps
 
+  @atom_keyed_map %{atom_key: :atom_val, nested_atom: %{nested_atom_2: :nested_atom_val}}
+  @mixed_keyed_map %{atom_key: "string_val", nested_atom: %{"nested_atom_2" => "mixed"}}
+  @string_keyed_map %{"string_key" => "string_val", "nested" => %{"nested2" => "nested3"}}
+
   describe ".compact/1" do
     test "with struct" do
       params = %URI{}
@@ -80,6 +84,64 @@ defmodule DarkMatter.MapsTest do
     test "given a valid :map with atom keys and sortable" do
       map = %{c: :atom, a: :atom, b: :atom}
       assert Maps.sorted_keys(map) == [:a, :b, :c]
+    end
+  end
+
+  describe ".iget/2" do
+    test "with valid map and atom key" do
+      assert Maps.iget(@atom_keyed_map, :atom_key) == :atom_val
+    end
+
+    test "with valid map and string key" do
+      assert Maps.iget(@string_keyed_map, :string_key) == "string_val"
+    end
+
+    test "with valid map and atom keys" do
+      assert Maps.iget(@atom_keyed_map, [:nested_atom, :nested_atom_2]) == :nested_atom_val
+    end
+
+    test "with valid map and string keys" do
+      assert Maps.iget(@string_keyed_map, [:nested, :nested2]) == "nested3"
+    end
+
+    test "with valid map and mixed keys" do
+      assert Maps.iget(@mixed_keyed_map, [:nested_atom, :nested_atom_2]) == "mixed"
+    end
+
+    test "with nil map it raises" do
+      assert_raise FunctionClauseError,
+                   "no function clause matching in DarkMatter.Maps.iget/2",
+                   fn ->
+                     Maps.iget(nil, :any)
+                   end
+    end
+
+    test "with valid map and string key accessor" do
+      assert_raise FunctionClauseError, fn ->
+        assert Maps.iget(%{}, "string_key")
+      end
+    end
+
+    test "with valid map and empty list accessor" do
+      assert_raise FunctionClauseError, fn ->
+        Maps.iget(%{}, [])
+      end
+    end
+  end
+
+  describe ".iget/3" do
+    test "with valid map and default" do
+      assert Maps.iget(%{}, :missing, "found") == "found"
+    end
+
+    test "with valid map and partial success and default" do
+      assert Maps.iget(%{found: %{none: :none}}, [:found, :any], "found") == "found"
+    end
+
+    test "with valid map and empty list accessor" do
+      assert_raise FunctionClauseError, fn ->
+        Maps.iget(%{}, [], :default)
+      end
     end
   end
 end
