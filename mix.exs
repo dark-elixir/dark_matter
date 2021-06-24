@@ -5,7 +5,7 @@ defmodule DarkMatter.MixProject do
 
   use Mix.Project
 
-  @version "1.1.2"
+  @version "1.1.3"
   @name "DarkMatter"
   @hexpm_url "http://hexdocs.pm/dark_matter"
   @github_url "https://github.com/dark-elixir/dark_matter"

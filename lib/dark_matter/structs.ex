@@ -48,4 +48,17 @@ defmodule DarkMatter.Structs do
     string_key = Atom.to_string(key)
     String.starts_with?(string_key, "__") and String.ends_with?(string_key, "__")
   end
+
+  @doc """
+  Reduce a map with only non nil default values for a given `module`.
+  """
+  @doc since: "1.1.3"
+  @spec defaults(module()) :: %{required(atom()) => any()}
+  def defaults(module) when is_atom(module) do
+    default = struct(module)
+
+    for {k, v} <- Map.from_struct(default), not meta_key?(k), not is_nil(v), into: %{} do
+      {k, v}
+    end
+  end
 end
