@@ -11,6 +11,10 @@ defmodule DarkMatter.Maps do
   # @type iget_key() :: atom() | non_neg_integer()
   @type accessor_path() :: iget_key() | [iget_key(), ...]
 
+  @type kv() :: {any(), any()}
+  @type kv_type() :: :atom | :string | :complex
+  @type map_keys_type() :: kv_type() | :mixed | :empty
+
   @compact_defaults %{allow_nil: false, deep: false}
 
   @doc """
@@ -121,4 +125,172 @@ defmodule DarkMatter.Maps do
       val -> val
     end
   end
+
+  @doc """
+  Classifies a `kv` pair by key type.
+
+  ## Examples
+
+      iex> typeof_kv({:atom, true})
+      :atom
+
+      iex> typeof_kv({"string", true})
+      :string
+
+      iex> typeof_kv({[], true})
+      :complex
+  """
+  @doc since: "1.1.4"
+  @spec typeof_kv(kv()) :: kv_type()
+  def typeof_kv({k, _v}) when is_atom(k), do: :atom
+  def typeof_kv({k, _v}) when is_binary(k), do: :string
+  def typeof_kv({_k, _v}), do: :complex
+
+  @doc """
+  Classifies a map by key type.
+
+  ## Examples
+
+      iex> typeof_keys(%{})
+      :empty
+
+      iex> typeof_keys(%URI{})
+      :atom
+
+      iex> typeof_keys(%{atom: true})
+      :atom
+
+      iex> typeof_keys(%{"string" =>  true})
+      :string
+
+      iex> typeof_keys(%{[] =>  "complex"})
+      :complex
+
+      iex> typeof_keys(%{:atom =>  true, "string" =>  true})
+      :mixed
+  """
+  @doc since: "1.1.4"
+  @spec typeof_keys(map() | struct()) :: map_keys_type()
+  def typeof_keys(struct) when is_struct(struct), do: :atom
+  def typeof_keys(map) when is_map(map) and map_size(map) == 0, do: :empty
+
+  def typeof_keys(map) when is_map(map) do
+    case map |> Enum.map(&typeof_kv/1) |> Enum.uniq() do
+      [type] -> type
+      [_ | _] -> :mixed
+    end
+  end
+
+  @doc """
+  Determine if a `map` keys are of type `t:atom/0`.
+
+  ## Examples
+
+      iex> atom_keys?(%{})
+      true
+
+      iex> atom_keys?(%URI{})
+      true
+
+      iex> atom_keys?(%{atom: true})
+      true
+
+      iex> atom_keys?(%{"string" =>  true})
+      false
+
+      iex> atom_keys?(%{[] =>  "complex"})
+      false
+
+      iex> atom_keys?(%{:atom =>  true, "string" =>  true})
+      false
+  """
+  @doc since: "1.1.4"
+  @spec atom_keys?(map) :: boolean()
+  def atom_keys?(map) when is_map(map) and map_size(map) == 0, do: true
+  def atom_keys?(map) when is_map(map), do: typeof_keys(map) == :atom
+
+  @doc """
+  Determine if a `map` keys are of type `t:String.t/0`.
+
+  ## Examples
+
+      iex> string_keys?(%{})
+      true
+
+      iex> string_keys?(%URI{})
+      false
+
+      iex> string_keys?(%{atom: true})
+      false
+
+      iex> string_keys?(%{"string" =>  true})
+      true
+
+      iex> string_keys?(%{[] =>  "complex"})
+      false
+
+      iex> string_keys?(%{:atom =>  true, "string" =>  true})
+      false
+  """
+  @doc since: "1.1.4"
+  @spec string_keys?(map) :: boolean()
+  def string_keys?(map) when is_map(map) and map_size(map) == 0, do: true
+  def string_keys?(map) when is_map(map), do: typeof_keys(map) == :string
+
+  @doc """
+  Determine if a `map` keys are of type `t:atom/0`.
+
+  ## Examples
+
+      iex> mixed_keys?(%{})
+      true
+
+      iex> mixed_keys?(%URI{})
+      false
+
+      iex> mixed_keys?(%{atom: true})
+      false
+
+      iex> mixed_keys?(%{"string" =>  true})
+      false
+
+      iex> mixed_keys?(%{[] =>  "complex"})
+      false
+
+      iex> mixed_keys?(%{:atom =>  true, "string" =>  true})
+      true
+  """
+  @doc since: "1.1.4"
+  @spec mixed_keys?(map) :: boolean()
+  def mixed_keys?(map) when is_map(map) and map_size(map) == 0, do: true
+  def mixed_keys?(map) when is_map(map), do: typeof_keys(map) == :mixed
+
+  @doc """
+  Determine if a `map` keys are of type `t:atom/0`.
+
+
+  ## Examples
+
+      iex> complex_keys?(%{})
+      true
+
+      iex> complex_keys?(%URI{})
+      false
+
+      iex> complex_keys?(%{atom: true})
+      false
+
+      iex> complex_keys?(%{"string" =>  true})
+      false
+
+      iex> complex_keys?(%{[] =>  "complex"})
+      true
+
+      iex> complex_keys?(%{:atom =>  true, "string" =>  true})
+      false
+  """
+  @doc since: "1.1.4"
+  @spec complex_keys?(map) :: boolean()
+  def complex_keys?(map) when is_map(map) and map_size(map) == 0, do: true
+  def complex_keys?(map) when is_map(map), do: typeof_keys(map) == :complex
 end
